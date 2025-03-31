@@ -791,7 +791,6 @@ namespace Prototype
                 return cmd.ExecuteNonQuery();
             }
         }
-
         public static List<Category> GetCategories()
         {
             List<Category> categories = new List<Category>();
@@ -914,6 +913,192 @@ namespace Prototype
                 }
             }
         }
+        public static List<TableColumn> GetTableColumns(string table)
+        {
+            List<TableColumn> columns = new List<TableColumn>();
+            using (MySqlConnection con = new MySqlConnection(conString))
+            {
+                con.Open();
+
+                string sql = $"SHOW COLUMNS FROM `{table}`;";
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.HasRows) return null;
+                    while (reader.Read())
+                    {
+                        columns.Add(new TableColumn
+                        {
+                            Name = reader.GetString("Field"),
+                            Type = reader.GetString("Type"),
+                            Nullable = reader.GetString("Null") == "YES",
+                            Extra = reader.GetString("Extra")
+                        });
+                    }
+                }
+            }
+            return columns;
+        }
+
+
+        /// <summary>
+        /// Получает массив заголовков из указнного csv файла
+        /// </summary>
+        public static string[] CSV_GetFileColumns(string filepath, char delimeter = ';')
+        {
+            if (!File.Exists(filepath))
+            {
+                std.error($"Указанный файл несуществует.\n{filepath}");
+                return null;
+            }
+            var reader = new StreamReader(filepath);
+            string importFile = reader.ReadLine();
+            string[] headers = importFile.Split(delimeter);
+            reader.Close();
+            return headers;
+        }
+
+
+        /// <summary>
+        /// Считывает csv файл и преобразует его в sql запрос типа "INSERT INTO"
+        /// </summary>
+        /// <param name="filepath">Путь к файлу</param>
+        /// <param name="table">Таблица, в которую будет произведён импорт</param>
+        /// <param name="delimeter">Символ-разделитель в csv файле</param>
+        public static void ImportData(string filepath, string table, char delimeter = ';')
+        {
+            if (!File.Exists(filepath))
+            {
+                std.error($"Указанный файл несуществует.\n{filepath}");
+                return;
+            }
+
+            var tableColumns = GetTableColumns(table);
+            var missingColumns = new List<TableColumn>();
+            var csvColumns = CSV_GetFileColumns(filepath, delimeter);
+
+            // записываем пропущенные в csv файле поля
+            foreach (var column in tableColumns)
+            {
+                if (!csvColumns.Contains(column.Name)) missingColumns.Add(column);
+            }
+
+            // проверяем наличие пропущенных полей в файле спрашиваем у пользователя, хочет ли он продолжить
+            if (missingColumns.Count > 0)
+            {
+                DialogResult ans = std.warning($"Количество параметров в файле не соответствует количеству параметров в таблице. Хотите попытаться импортировать данные игнорируя пропущенные параметры?");
+                if (ans == DialogResult.No) return;
+            }
+
+            // проверяем свойства пропущенных полей
+            missingColumns?.ForEach(column => 
+            {
+                if (!column.Nullable)
+                {
+                    if (column.IsForeignKey() || string.IsNullOrWhiteSpace(column.Name))
+                    {
+                        std.error("Импорт данных невозможен.");
+                        return;
+                    }
+                }
+            });
+
+            // удаляем пропущенные поля из списка
+            missingColumns?.ForEach(column => 
+            {
+                if (tableColumns.Contains(column)) { tableColumns.Remove(column); }
+            });
+
+            // так как в csv файле и таблице колонки могут идти в разном порядке,
+            // для удобного формирования корректного sql запроса
+            // распределяем информацию по колонкам в соответствии с таблицей.
+            int[] arraySortMethod = new int[tableColumns.Count];
+            for (int i = 0; i < tableColumns.Count; i++)
+            {
+                if (tableColumns[i].Name != csvColumns[i])
+                {
+                    for (int k = 0; k < csvColumns.Length; k++)
+                    {
+                        if (tableColumns[i].Name == csvColumns[k])
+                        {
+                            arraySortMethod[i] = k;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                arraySortMethod[i] = i;
+            }
+
+            List<string> sorted = new List<string>();
+            
+            // зная в каком порядке расположены колонки файла относительно колонок таблицы,
+            // для большего удобства записываем информацию в отдельный список в правильном порядке
+            using (var reader = new StreamReader(filepath))
+            {
+                while (true)
+                {
+                    string line = reader.ReadLine();
+                    if (line == null) break;
+                    string[] data = line.Split(delimeter);
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        try
+                        {
+                            sorted.Add(data[arraySortMethod[i]]);
+                        }
+                        catch
+                        {
+                            std.error("При чтении файла возникла неизвестная ошибка.");
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            using (MySqlConnection con = new MySqlConnection(conString))
+            {
+                con.Open();
+
+                string columns = "";
+                tableColumns.ForEach(column =>
+                {
+                    if (tableColumns.IndexOf(column) != 0) columns += ",";
+                    columns += column.Name;
+                });
+
+                string requestBody = $"INSERT INTO `{table}` ({columns}) VALUES ";
+                string sql;
+                int recordsImported = 0;
+                //пропускаем заголовки и "построчно" считываем файл. i - строки, k - колонки
+                for (int i = tableColumns.Count; i < sorted.Count; i += tableColumns.Count)
+                {
+                    sql = requestBody;
+                    sql += "(";
+                    for (int k = 0; k < tableColumns.Count; k++)
+                    {
+                        if (k != 0) sql += ", ";
+                        string item = sorted[i + k];
+                        sql += $"\'{item}\'";
+                    }
+                    sql += ");";
+                    
+                    try
+                    {
+                        var cmd = new MySqlCommand(sql, con);
+                        cmd.ExecuteNonQuery();
+                        recordsImported++;
+                        continue;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+                std.info($"Импортировано записей: {recordsImported}");
+            }
+        }
+
         #region Handbooks
         /// <summary>
         /// Получает наименования из указанного в параметре справочника. Справочник - таблица содержащая только id и name

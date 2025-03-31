@@ -28,6 +28,7 @@ namespace Prototype
         public static void error(string msg) => MessageBox.Show(msg, "ОШБИКА", MessageBoxButtons.OK, MessageBoxIcon.Error);
         public static void info(string msg) => MessageBox.Show(msg, "ИНФО", MessageBoxButtons.OK, MessageBoxIcon.Information);
         public static DialogResult question(string msg) => MessageBox.Show(msg, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        public static DialogResult warning(string msg) => MessageBox.Show(msg, "ВНИМАНИЕ", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         #endregion
 
         public static string sha256(string str_to_hash)

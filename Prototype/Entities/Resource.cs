@@ -18,7 +18,6 @@ namespace Prototype.Entities
         public Category Category { get; set; }
         public Image Picture { get; set; }
         public double Price { get; set; }
-        // id пользователя, создавшего запрос на публикацию ресурса
         public int CreatedByUserId { get; set; } 
         public DateTime PublicationDate { get; set; }
 

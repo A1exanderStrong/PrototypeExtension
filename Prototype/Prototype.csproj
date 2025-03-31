@@ -40,6 +40,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xaml" />
@@ -63,6 +64,7 @@
     <Compile Include="Admin\AddEditUser.Designer.cs">
       <DependentUpon>AddEditUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TableColumn.cs" />
     <Compile Include="Manager\AddEditHandbook.cs">
       <SubType>Form</SubType>
     </Compile>
