@@ -38,7 +38,7 @@ namespace Prototype
                 byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(str_to_hash));
                 StringBuilder builder = new StringBuilder();
                 foreach (byte b in bytes)
-                    builder.Append(b.ToString("x2")); // Convert to hexadecimal string
+                    builder.Append(b.ToString("x2"));
 
                 return builder.ToString();
             }

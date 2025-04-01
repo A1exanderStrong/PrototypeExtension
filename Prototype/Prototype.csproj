@@ -64,6 +64,12 @@
     <Compile Include="Admin\AddEditUser.Designer.cs">
       <DependentUpon>AddEditUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Admin\ImportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admin\ImportForm.Designer.cs">
+      <DependentUpon>ImportForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\TableColumn.cs" />
     <Compile Include="Manager\AddEditHandbook.cs">
       <SubType>Form</SubType>
@@ -143,6 +149,9 @@
     </Compile>
     <EmbeddedResource Include="Admin\AddEditUser.resx">
       <DependentUpon>AddEditUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Admin\ImportForm.resx">
+      <DependentUpon>ImportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Manager\AddEditHandbook.resx">
       <DependentUpon>AddEditHandbook.cs</DependentUpon>

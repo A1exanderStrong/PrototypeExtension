@@ -34,6 +34,14 @@ namespace Prototype
         private void button1_Click(object sender, EventArgs e)
         {
             if (!checkFields()) { std.error("Не все поля заполнены!"); return; }
+            if (txtLogin.Text == AppData.DefaultUser.Login &&
+                txtPassword.Text == AppData.DefaultUser.Password) 
+            {
+                AppData.ActiveUser = AppData.DefaultUser;
+                Hide(); 
+                new MainMenu().ShowDialog(); 
+                return; 
+            }
             if (!Connection.Test()) { return; }
 
             var activeUser = Connection.Auth(txtLogin.Text, txtPassword.Text);

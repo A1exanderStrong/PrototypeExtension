@@ -20,6 +20,7 @@ namespace Prototype.Entities
         public const byte ADMIN = 1;
         public const byte MANAGER = 2;
         public const byte USER = 3;
+        public const byte DEFAULT = 0;
 
         public string GetRegistrationDate()
         {

@@ -939,6 +939,26 @@ namespace Prototype
             }
             return columns;
         }
+        public static List<string> GetTables() 
+        {
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+
+                string sql = $"SHOW TABLES FROM {database}";
+                var cmd = new MySqlCommand(sql, con);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (!reader.HasRows) return null;
+                    var tables = new List<string>();
+                    while (reader.Read())
+                    {
+                        tables.Add(reader[0].ToString());
+                    }
+                    return tables;
+                }
+            }
+        }
 
 
         /// <summary>
@@ -996,6 +1016,11 @@ namespace Prototype
                 if (!column.Nullable)
                 {
                     if (column.IsForeignKey() || string.IsNullOrWhiteSpace(column.Name))
+                    {
+                        std.error("Импорт данных невозможен.");
+                        return;
+                    }
+                    if (column.IsPrimaryKey() && !column.HasAutoIncrement())
                     {
                         std.error("Импорт данных невозможен.");
                         return;
@@ -1070,7 +1095,7 @@ namespace Prototype
                 string requestBody = $"INSERT INTO `{table}` ({columns}) VALUES ";
                 string sql;
                 int recordsImported = 0;
-                //пропускаем заголовки и "построчно" считываем файл. i - строки, k - колонки
+                //пропускаем заголовки и "построчно" считываем файл.
                 for (int i = tableColumns.Count; i < sorted.Count; i += tableColumns.Count)
                 {
                     sql = requestBody;
@@ -1090,7 +1115,7 @@ namespace Prototype
                         recordsImported++;
                         continue;
                     }
-                    catch
+                    catch 
                     {
                         continue;
                     }

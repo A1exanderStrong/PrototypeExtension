@@ -30,7 +30,7 @@ namespace Prototype
         private void InitializeComponent()
         {
             this.btnBack = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnResources = new System.Windows.Forms.Button();
             this.btnSalesReport = new System.Windows.Forms.Button();
             this.buttonUsers = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,11 +38,13 @@ namespace Prototype
             this.btnResourcesOnRequest = new System.Windows.Forms.Button();
             this.btnResourcesOwned = new System.Windows.Forms.Button();
             this.btnHandbook = new System.Windows.Forms.Button();
+            this.btnImport = new System.Windows.Forms.Button();
+            this.btnRecoverStruct = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnBack
             // 
-            this.btnBack.Location = new System.Drawing.Point(78, 392);
+            this.btnBack.Location = new System.Drawing.Point(78, 493);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(249, 37);
             this.btnBack.TabIndex = 6;
@@ -50,15 +52,15 @@ namespace Prototype
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnResources
             // 
-            this.button2.Location = new System.Drawing.Point(78, 73);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(249, 37);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Ресурсы";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnResources.Location = new System.Drawing.Point(78, 73);
+            this.btnResources.Name = "btnResources";
+            this.btnResources.Size = new System.Drawing.Size(249, 37);
+            this.btnResources.TabIndex = 7;
+            this.btnResources.Text = "Ресурсы";
+            this.btnResources.UseVisualStyleBackColor = true;
+            this.btnResources.Click += new System.EventHandler(this.button2_Click);
             // 
             // btnSalesReport
             // 
@@ -128,11 +130,31 @@ namespace Prototype
             this.btnHandbook.UseVisualStyleBackColor = true;
             this.btnHandbook.Click += new System.EventHandler(this.btnHandbook_Click);
             // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(78, 374);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(249, 37);
+            this.btnImport.TabIndex = 16;
+            this.btnImport.Text = "Импорт";
+            this.btnImport.UseVisualStyleBackColor = true;
+            // 
+            // btnRecoverStruct
+            // 
+            this.btnRecoverStruct.Location = new System.Drawing.Point(78, 417);
+            this.btnRecoverStruct.Name = "btnRecoverStruct";
+            this.btnRecoverStruct.Size = new System.Drawing.Size(249, 37);
+            this.btnRecoverStruct.TabIndex = 17;
+            this.btnRecoverStruct.Text = "Восстановить структуру БД";
+            this.btnRecoverStruct.UseVisualStyleBackColor = true;
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(407, 441);
+            this.ClientSize = new System.Drawing.Size(407, 542);
+            this.Controls.Add(this.btnRecoverStruct);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnHandbook);
             this.Controls.Add(this.btnResourcesOwned);
             this.Controls.Add(this.btnResourcesOnRequest);
@@ -140,7 +162,7 @@ namespace Prototype
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonUsers);
             this.Controls.Add(this.btnSalesReport);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnResources);
             this.Controls.Add(this.btnBack);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -159,7 +181,7 @@ namespace Prototype
         #endregion
 
         private System.Windows.Forms.Button btnBack;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnResources;
         private System.Windows.Forms.Button btnSalesReport;
         private System.Windows.Forms.Button buttonUsers;
         private System.Windows.Forms.Label label1;
@@ -167,5 +189,7 @@ namespace Prototype
         private System.Windows.Forms.Button btnResourcesOnRequest;
         private System.Windows.Forms.Button btnResourcesOwned;
         private System.Windows.Forms.Button btnHandbook;
+        private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.Button btnRecoverStruct;
     }
 }

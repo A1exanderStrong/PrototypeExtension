@@ -56,11 +56,15 @@ namespace Prototype
                     {
                         btnSendResource.Visible = false;
                         btnResourcesOnRequest.Visible = false;
+                        btnSalesReport.Visible = false;
                         btnResourcesOwned.Visible = false;
+                        btnHandbook.Visible = false;
                         break;
                     }
                 case Entities.User.MANAGER:
                     {
+                        btnRecoverStruct.Visible = false;
+                        btnImport.Visible = false;
                         buttonUsers.Visible = false;
                         btnSendResource.Visible = false;
                         btnResourcesOwned.Visible = false;
@@ -68,9 +72,21 @@ namespace Prototype
                     }
                 case Entities.User.USER:
                     {
+                        btnRecoverStruct.Visible = false;
+                        btnImport.Visible = false;
                         buttonUsers.Visible = false;
                         btnSalesReport.Visible = false;
                         btnResourcesOnRequest.Visible = false;
+                        break;
+                    }
+                case Entities.User.DEFAULT:
+                    {
+                        btnSendResource.Visible = false;
+                        btnResourcesOnRequest.Visible = false;
+                        btnResourcesOwned.Visible = false;
+                        buttonUsers.Visible = false;
+                        btnSalesReport.Visible = false;
+                        btnResources.Visible = false;
                         break;
                     }
             }
@@ -79,31 +95,45 @@ namespace Prototype
 
         private void resizeForm(int role)
         {
+            // first button pos - 78, 73
             // second button pos - 78, 116
             // third button pos - 78, 159
 
             // form size +60 for each button
             // btnBack pos = form size - 90
 
+            Point LocFirstBtn = new Point(78, 73);
+            Point LocSecondBtn = new Point(78, 116);
+            Point LocThirdBtn = new Point(78, 159);
+
             if (role == Entities.User.ADMIN)
             {
-                buttonUsers.Location = new Point(78, 116);
-                btnBack.Location = new Point(78, 190);
-                Size = new Size(423, 280);
+                buttonUsers.Location = LocSecondBtn;
+                btnRecoverStruct.Location = LocThirdBtn;
+                btnImport.Location = new Point(78, 202);
+                btnBack.Location = new Point(78, 310);
+                Size = new Size(423, 400);
             }
             if (role == Entities.User.MANAGER)
             {
-                btnResourcesOnRequest.Location = new Point(78, 159);
+                btnResourcesOnRequest.Location = LocThirdBtn;
                 btnHandbook.Location = new Point(78, 202);
                 btnBack.Location = new Point(78, 310);
                 Size = new Size(423, 400);
             }
             if (role == Entities.User.USER)
             {
-                btnSendResource.Location = new Point(78, 116);
-                btnResourcesOwned.Location = new Point(78, 159);
+                btnSendResource.Location = LocSecondBtn;
+                btnResourcesOwned.Location = LocThirdBtn;
                 btnBack.Location = new Point(78, 250);
                 Size = new Size(423, 340);
+            }
+            if (role == Entities.User.DEFAULT)
+            {
+                btnImport.Location = LocFirstBtn;
+                btnRecoverStruct.Location = LocSecondBtn;
+                btnBack.Location = new Point(78, 190);
+                Size = new Size(423, 280);
             }
         }
 
