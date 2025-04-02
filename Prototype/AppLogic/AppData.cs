@@ -23,5 +23,7 @@ namespace Prototype
                 Name = "По умолчанию"
             }
         };
+
+        public static string structDump = "../../dumps/struct_dump.sql";
     }
 }

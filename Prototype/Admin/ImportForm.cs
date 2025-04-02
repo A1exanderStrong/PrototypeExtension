@@ -18,11 +18,6 @@ namespace Prototype.Admin
             InitializeComponent();
         }
 
-        private void txtFilepath_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void ImportForm_Load(object sender, EventArgs e)
         {
             cmbTables.Items.AddRange(Connection.GetTables().ToArray());
@@ -50,6 +45,12 @@ namespace Prototype.Admin
             }
 
             Connection.ImportData(txtFilepath.Text, cmbTables.Text);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            Hide();
+            new MainMenu().ShowDialog();            
         }
     }
 }

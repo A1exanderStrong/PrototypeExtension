@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using Prototype.Entities;
 
 namespace Prototype
@@ -41,6 +34,11 @@ namespace Prototype
         {
             Hide();
             new CheckResourcesForm().ShowDialog();
+        }
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            Hide();
+            new Admin.ImportForm().ShowDialog();
         }
 
         private void MainMenu_FormClosing(object sender, FormClosingEventArgs e)
@@ -153,6 +151,41 @@ namespace Prototype
         {
             Hide();
             new OwnedResourcesForm().ShowDialog();
+        }
+
+        private void btnRecoverStruct_Click(object sender, EventArgs e)
+        {
+            if (!File.Exists(AppData.structDump))
+            {
+                var ans = std.warning("Не удалось найти дамп структуры БД. Хотите задать его вручную?");
+                if (ans == DialogResult.No) return;
+                using (var fd = new OpenFileDialog())
+                {
+                    fd.Filter = "Скрипты SQL (*.sql)|*.sql";
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        AppData.structDump = fd.FileName;
+                    }
+                }
+            }
+            string database = Connection.GetDatabaseFromScript(AppData.structDump);
+            if (database == null)
+            {
+                std.error($"Не удалось получить название БД из указанного скрипта.\n" +
+                    $"Указанный скрипт: {AppData.structDump}");
+            }
+            if (Connection.DatabaseExistsOnServer(database))
+            {
+                var ans = std.warning("База данных уже существует на сервере. Восстановление структуры приведёт к " +
+                    "потере всей информации хранящейся в ней!\nВы действительно хотите продолжить?");
+                if (ans == DialogResult.No) return;
+            }
+            
+            if (Connection.ExecuteScript(AppData.structDump))
+            {
+                std.info("Структура БД успешно восстановлена");
+                return;
+            }
         }
     }
 }

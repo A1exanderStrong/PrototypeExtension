@@ -44,7 +44,6 @@ namespace Prototype.Admin
             this.txtFilepath.Name = "txtFilepath";
             this.txtFilepath.Size = new System.Drawing.Size(427, 26);
             this.txtFilepath.TabIndex = 0;
-            this.txtFilepath.TextChanged += new System.EventHandler(this.txtFilepath_TextChanged);
             // 
             // label1
             // 
@@ -73,6 +72,7 @@ namespace Prototype.Admin
             this.btnBack.TabIndex = 3;
             this.btnBack.Text = "Назад";
             this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // label2
             // 

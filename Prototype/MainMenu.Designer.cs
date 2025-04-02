@@ -138,6 +138,7 @@ namespace Prototype
             this.btnImport.TabIndex = 16;
             this.btnImport.Text = "Импорт";
             this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnRecoverStruct
             // 
@@ -147,6 +148,7 @@ namespace Prototype
             this.btnRecoverStruct.TabIndex = 17;
             this.btnRecoverStruct.Text = "Восстановить структуру БД";
             this.btnRecoverStruct.UseVisualStyleBackColor = true;
+            this.btnRecoverStruct.Click += new System.EventHandler(this.btnRecoverStruct_Click);
             // 
             // MainMenu
             // 

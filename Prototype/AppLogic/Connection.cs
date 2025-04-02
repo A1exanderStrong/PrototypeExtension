@@ -55,8 +55,9 @@ namespace Prototype
         public const string pwd = "root";
 
         public static string conString = $"host={host};uid={usr};pwd={pwd};database={database};";
+        public static string conStringNoDB = $"host={host};uid={usr};pwd={pwd};";
         #endregion
-        
+
         public static void ShowIP()
         {
             var request = WebRequest.Create("http://ipinfo.io/ip");
@@ -780,59 +781,85 @@ namespace Prototype
 
         #endregion
 
-        public static long GetRecordsCount(string table)
+        #region handbooks
+        /// <summary>
+        /// Получает наименования из указанного в параметре справочника. Справочник - таблица содержащая только id и name
+        /// </summary>
+        /// <param name="handbook"></param>
+        /// <returns></returns>
+        public static List<Handbook> GetHandbookData(string handbook)
         {
+            List<Handbook> data = new List<Handbook>();
             using (var con = new MySqlConnection(conString))
             {
                 con.Open();
-                string sql = $"SELECT COUNT(*) FROM {table}";
-
-                var cmd = new MySqlCommand(sql, con);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-        public static List<Category> GetCategories()
-        {
-            List<Category> categories = new List<Category>();
-            using (var con = new MySqlConnection(conString))
-            {
-                con.Open();
-
-                string sql = "SELECT * FROM `categories`";
+                string sql = $"SELECT * FROM {handbook}";
                 var cmd = new MySqlCommand(sql, con);
                 using (var reader = cmd.ExecuteReader())
                     while (reader.Read())
                     {
-                        var category = new Category
+                        data.Add(new Handbook
                         {
                             Id = reader.GetInt32("id"),
                             Name = reader.GetString("name")
-                        };
-
-                        categories.Add(category);
+                        });
                     }
             }
-            return categories;
+            return data;
         }
-        public static Category GetCategory(int id)
+        /// <summary>
+        /// Создаёт в базе данных запись из объекта справочника.
+        /// </summary>
+        /// <param name="handbook"></param>
+        public static void CreateHandbookItem(string handbook, Handbook item)
+        {
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+                string sql = $"INSERT INTO {handbook} (name) VALUES (@Name)";
+
+                var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("Name", item.Name);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public static void UpdateHandbookItem(string handbook, Handbook item)
+        {
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+                string sql = $"UPDATE {handbook} SET name=@Name WHERE id=@Id";
+
+                var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("Name", item.Name);
+                cmd.Parameters.AddWithValue("Id", item.Id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public static Handbook GetHandbookItem(string table, string name)
         {
             using (var con = new MySqlConnection(conString))
             {
                 con.Open();
 
-                string sql = $"SELECT * FROM categories WHERE id={id}";
+                string sql = $"SELECT * FROM {table} WHERE name=@Name";
                 var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("Name", name);
                 using (var reader = cmd.ExecuteReader())
-                {
-                    reader.Read();
-                    return new Category
+                    while (reader.Read())
                     {
-                        Id = reader.GetInt32("id"),
-                        Name = reader.GetString("name")
-                    };
-                }
+                        return new Handbook
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name")
+                        };
+                    }
             }
+            return null;
         }
+        #endregion
+
+        #region roles
         public static List<Role> GetRoles()
         {
             List<Role> roles = new List<Role>();
@@ -893,6 +920,51 @@ namespace Prototype
                 }
             }
         }
+        #endregion
+
+        #region categories
+        public static List<Category> GetCategories()
+        {
+            List<Category> categories = new List<Category>();
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+
+                string sql = "SELECT * FROM `categories`";
+                var cmd = new MySqlCommand(sql, con);
+                using (var reader = cmd.ExecuteReader())
+                    while (reader.Read())
+                    {
+                        var category = new Category
+                        {
+                            Id = reader.GetInt32("id"),
+                            Name = reader.GetString("name")
+                        };
+
+                        categories.Add(category);
+                    }
+            }
+            return categories;
+        }
+        public static Category GetCategory(int id)
+        {
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+
+                string sql = $"SELECT * FROM categories WHERE id={id}";
+                var cmd = new MySqlCommand(sql, con);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    reader.Read();
+                    return new Category
+                    {
+                        Id = reader.GetInt32("id"),
+                        Name = reader.GetString("name")
+                    };
+                }
+            }
+        }
         public static Category GetCategory(string name)
         {
             using (var con = new MySqlConnection(conString))
@@ -913,6 +985,20 @@ namespace Prototype
                 }
             }
         }
+        #endregion
+
+        public static long GetRecordsCount(string table)
+        {
+            using (var con = new MySqlConnection(conString))
+            {
+                con.Open();
+                string sql = $"SELECT COUNT(*) FROM {table}";
+
+                var cmd = new MySqlCommand(sql, con);
+                return cmd.ExecuteNonQuery();
+            }
+        }
+        
         public static List<TableColumn> GetTableColumns(string table)
         {
             List<TableColumn> columns = new List<TableColumn>();
@@ -997,7 +1083,7 @@ namespace Prototype
             var missingColumns = new List<TableColumn>();
             var csvColumns = CSV_GetFileColumns(filepath, delimeter);
 
-            // записываем пропущенные в csv файле поля
+            // записываем пропущенные в csv файле колонки
             foreach (var column in tableColumns)
             {
                 if (!csvColumns.Contains(column.Name)) missingColumns.Add(column);
@@ -1115,7 +1201,7 @@ namespace Prototype
                         recordsImported++;
                         continue;
                     }
-                    catch 
+                    catch
                     {
                         continue;
                     }
@@ -1124,85 +1210,73 @@ namespace Prototype
             }
         }
 
-        #region Handbooks
-        /// <summary>
-        /// Получает наименования из указанного в параметре справочника. Справочник - таблица содержащая только id и name
-        /// </summary>
-        /// <param name="handbook"></param>
-        /// <returns></returns>
-        public static List<Handbook> GetHandbookData(string handbook)
+        public static bool ExecuteScript(string filepath)
         {
-            List<Handbook> data = new List<Handbook>();
-            using (var con = new MySqlConnection(conString))
+            try
+            {
+                using (var con = new MySqlConnection(conStringNoDB))
+                {
+                    con.Open();
+
+                    string sql = File.ReadAllText(filepath);
+                    var cmd = new MySqlCommand(sql, con);
+                    cmd.ExecuteNonQuery();
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static string GetDatabaseFromScript(string filepath)
+        {
+            string[] keyWords = "CREATE DATABASE IF NOT EXISTS USE".Split(' ');
+            using (var reader = new StreamReader(filepath)) 
+            {
+                while (true)
+                {
+                    string line = reader.ReadLine();
+                    if (line == null) return null;
+                    string[] words = line.Split(' ');
+                    bool targetLine = false;
+                    foreach(string word in words) 
+                    { 
+                        // проверяем строку на наличие ключевых слов
+                        if (keyWords.Contains(word))
+                        {
+                            // если ключевое слово найдено, значит мы находимся на нужной строке
+                            targetLine = true;
+                        }
+                        if (targetLine)
+                        {
+                            // если мы находимся на нужной строке, значит нам нужно искать единственное слово,
+                            // которое не является ключевым
+                            if (!keyWords.Contains(word) && !string.IsNullOrWhiteSpace(word))
+                            {
+                                string temp = word;
+                                if (temp[0] == '`') temp = temp.Remove(0, 1);
+                                if (temp[temp.Length - 1 ]== '`') temp = temp.Remove(temp.Length - 1, 1);
+                                return temp;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public static bool DatabaseExistsOnServer(string name)
+        {
+            using (var con = new MySqlConnection(conStringNoDB))
             {
                 con.Open();
-                string sql = $"SELECT * FROM {handbook}";
+               
+                string sql = $"SHOW SCHEMAS WHERE `Database`='{name}'";
                 var cmd = new MySqlCommand(sql, con);
                 using (var reader = cmd.ExecuteReader())
-                    while (reader.Read())
-                    {
-                        data.Add(new Handbook
-                        {
-                            Id = reader.GetInt32("id"),
-                            Name = reader.GetString("name")
-                        });
-                    }
-            }
-            return data;
-        }
-
-        /// <summary>
-        /// Создаёт в базе данных запись из объекта справочника.
-        /// </summary>
-        /// <param name="handbook"></param>
-        public static void CreateHandbookItem(string handbook, Handbook item)
-        {
-            using (var con = new MySqlConnection(conString))
-            {
-                con.Open();
-                string sql = $"INSERT INTO {handbook} (name) VALUES (@Name)";
-
-                var cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("Name", item.Name);
-                cmd.ExecuteNonQuery();
+                {
+                    return reader.HasRows;
+                }
             }
         }
-
-        public static void UpdateHandbookItem(string handbook, Handbook item)
-        {
-            using (var con = new MySqlConnection(conString))
-            {
-                con.Open();
-                string sql = $"UPDATE {handbook} SET name=@Name WHERE id=@Id";
-
-                var cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("Name", item.Name);
-                cmd.Parameters.AddWithValue("Id", item.Id);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static Handbook GetHandbookItem(string table, string name)
-        {
-            using (var con = new MySqlConnection(conString))
-            {
-                con.Open();
-
-                string sql = $"SELECT * FROM {table} WHERE name=@Name";
-                var cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("Name", name);
-                using (var reader = cmd.ExecuteReader())
-                    while (reader.Read())
-                    {
-                        return new Handbook
-                        {
-                            Id = reader.GetInt32("id"),
-                            Name = reader.GetString("name")
-                        };
-                    }
-            }
-            return null;
-        }
-        #endregion
     }
 }
