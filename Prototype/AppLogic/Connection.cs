@@ -42,7 +42,7 @@ namespace Prototype
         //public const string pwd = "c?D#mUsCTyFR2y4";
 
         // ------------------------ MY ARENA ------------------------
-        //public const string host = "46.174.50.9";
+        //public const string host = "46.174.50.7";
         //public const string host = "db4.myarena.ru";
         //public const string database = "u40702_prototype";
         //public const string usr = "u40702_master";

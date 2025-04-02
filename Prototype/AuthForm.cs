@@ -15,6 +15,9 @@ namespace Prototype
     public partial class AuthForm : Form
     {
         bool isPasswordVisible = false;
+        string captchaText = null;
+        int blockDelay = 10;
+        List<Control> controls = new List<Control>();
         public AuthForm()
         {
             InitializeComponent();
@@ -31,9 +34,19 @@ namespace Prototype
             else { pictureBox1.ImageLocation = "../../icons/eye.png"; }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             if (!checkFields()) { std.error("Не все поля заполнены!"); return; }
+            if (captchaText != null && captchaText != txtCaptcha.Text)
+            {
+                std.error("Капча введена неверно");
+                txtPassword.Text = "";
+                BlockForm();
+                await Task.Delay(1000 * blockDelay);
+                UnlockForm();
+                UpdateCaptcha(); 
+                return;
+            }
             if (txtLogin.Text == AppData.DefaultUser.Login &&
                 txtPassword.Text == AppData.DefaultUser.Password) 
             {
@@ -45,11 +58,69 @@ namespace Prototype
             if (!Connection.Test()) { return; }
 
             var activeUser = Connection.Auth(txtLogin.Text, txtPassword.Text);
-            if (activeUser == null) { std.error("Неверно указаны логин или пароль"); return; }
+            if (activeUser == null) 
+            { 
+                std.error("Неверно указаны логин или пароль");
+                txtPassword.Text = "";
+                UpdateCaptcha();
+                return; 
+            }
             AppData.ActiveUser = activeUser;
             
             Hide();
             new MainMenu().ShowDialog();
+        }
+
+        private void UpdateCaptcha()
+        {
+            Size = new Size(815, 227);
+            picCaptcha.Image = null;
+            picCaptcha.Update();
+
+            string part0 = std.RandomString(4);
+            string part1 = std.RandomString(4);
+            captchaText = part0 + part1;
+
+            // текст капчи
+            Graphics g = picCaptcha.CreateGraphics();
+            Font font = new Font("Comic Sans", 24);
+            Point textChunk01 = new Point(std.rnd.Next(0, 50), std.rnd.Next(0, 30));
+            Point textChunk02 = new Point(textChunk01.X + std.rnd.Next(25, 45), textChunk01.Y + std.rnd.Next(20, 40));
+            g.DrawString(part0, font, std.RandomBrush(), textChunk01);
+            g.DrawString(part1, font, std.RandomBrush(), textChunk02);
+
+            Pen pen = new Pen(Brushes.White);
+
+            // перечёркивающие линии
+            pen.Width = 2.5f;
+            Point initPoint01 = new Point(textChunk01.X, textChunk01.Y + std.rnd.Next(10, 40));
+            Point initPoint02 = new Point(textChunk02.X, textChunk02.Y + std.rnd.Next(10, 40));
+            g.DrawLine(pen, initPoint01, new Point(textChunk01.X + 75, textChunk01.Y + std.rnd.Next(10, 40)));
+            g.DrawLine(pen, initPoint02, new Point(textChunk02.X + 75, textChunk02.Y + std.rnd.Next(10, 40)));
+
+            pen.Width = 0.25f;
+            // шум
+            for (int x = 0; x < picCaptcha.Size.Width; x+=2)
+            {
+                for (int y = 0; y < picCaptcha.Size.Height; y+=2)
+                {
+                    if (std.rnd.Next() % 20 == 0) g.DrawRectangle(pen, new Rectangle(new Point(x, y), new Size(1,1)));
+                }
+            }
+        }
+        private void BlockForm()
+        {
+            controls.ForEach(control =>
+            {
+                control.Enabled = false;
+            });
+        }
+        private void UnlockForm()
+        {
+            controls.ForEach(control =>
+            {
+                control.Enabled = true;
+            });
         }
 
         private bool checkFields()
@@ -63,6 +134,17 @@ namespace Prototype
         {
             isPasswordVisible = !isPasswordVisible;
             togglePassword();
+        }
+
+        private void btnUpdateCaptcha_Click(object sender, EventArgs e)
+        {
+            UpdateCaptcha();
+        }
+
+        private void AuthForm_Load(object sender, EventArgs e)
+        {
+            Size = new Size(427, 227);
+            controls.AddRange(new List<Control> { txtCaptcha, txtLogin, txtPassword, btnUpdateCaptcha, button1 });
         }
     }
 }

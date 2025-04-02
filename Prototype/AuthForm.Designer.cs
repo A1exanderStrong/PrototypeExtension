@@ -39,7 +39,11 @@ namespace Prototype
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.picCaptcha = new System.Windows.Forms.PictureBox();
+            this.txtCaptcha = new System.Windows.Forms.TextBox();
+            this.btnUpdateCaptcha = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCaptcha)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -105,11 +109,41 @@ namespace Prototype
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
+            // picCaptcha
+            // 
+            this.picCaptcha.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.picCaptcha.Location = new System.Drawing.Point(418, 12);
+            this.picCaptcha.Name = "picCaptcha";
+            this.picCaptcha.Size = new System.Drawing.Size(270, 114);
+            this.picCaptcha.TabIndex = 7;
+            this.picCaptcha.TabStop = false;
+            // 
+            // txtCaptcha
+            // 
+            this.txtCaptcha.Location = new System.Drawing.Point(418, 138);
+            this.txtCaptcha.MaxLength = 8;
+            this.txtCaptcha.Name = "txtCaptcha";
+            this.txtCaptcha.Size = new System.Drawing.Size(270, 26);
+            this.txtCaptcha.TabIndex = 8;
+            // 
+            // btnUpdateCaptcha
+            // 
+            this.btnUpdateCaptcha.Location = new System.Drawing.Point(694, 12);
+            this.btnUpdateCaptcha.Name = "btnUpdateCaptcha";
+            this.btnUpdateCaptcha.Size = new System.Drawing.Size(96, 37);
+            this.btnUpdateCaptcha.TabIndex = 9;
+            this.btnUpdateCaptcha.Text = "Обновить";
+            this.btnUpdateCaptcha.UseVisualStyleBackColor = true;
+            this.btnUpdateCaptcha.Click += new System.EventHandler(this.btnUpdateCaptcha_Click);
+            // 
             // AuthForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 188);
+            this.ClientSize = new System.Drawing.Size(412, 188);
+            this.Controls.Add(this.btnUpdateCaptcha);
+            this.Controls.Add(this.txtCaptcha);
+            this.Controls.Add(this.picCaptcha);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txtPassword);
@@ -125,7 +159,9 @@ namespace Prototype
             this.Name = "AuthForm";
             this.Text = "Auth Form";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AuthForm_FormClosing);
+            this.Load += new System.EventHandler(this.AuthForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCaptcha)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -140,6 +176,9 @@ namespace Prototype
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox picCaptcha;
+        private System.Windows.Forms.TextBox txtCaptcha;
+        private System.Windows.Forms.Button btnUpdateCaptcha;
     }
 }
 

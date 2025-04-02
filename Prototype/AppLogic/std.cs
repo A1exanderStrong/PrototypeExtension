@@ -23,6 +23,7 @@ namespace Prototype
     {
         private static int exitCalls = 0;
         public static string loader_gif = "https://i.gifer.com/origin/b4/b4d657e7ef262b88eb5f7ac021edda87.gif";
+        public static Random rnd = new Random();
 
         #region messages
         public static void error(string msg) => MessageBox.Show(msg, "ОШБИКА", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -43,7 +44,6 @@ namespace Prototype
                 return builder.ToString();
             }
         }
-
         public static void AppExit(FormClosingEventArgs e)
         {
             if (exitCalls > 0) return;
@@ -52,7 +52,6 @@ namespace Prototype
             if (answer == DialogResult.No) { e.Cancel = true; exitCalls = 0; }
             if (answer == DialogResult.Yes) Application.Exit();
         }
-
         public static async Task<Image> GetWebImageAsync(string url) => await Task.Run(() =>
         {
             WebRequest request = WebRequest.Create(url);
@@ -60,7 +59,6 @@ namespace Prototype
             using (var stream = response.GetResponseStream())
                 return Image.FromStream(stream);
         });
-
         public static Image GetWebImage(string url)
         {
             try
@@ -72,7 +70,6 @@ namespace Prototype
             }
             catch { return null; }
         }
-
         public static int CountPages(int items_per_page, int items_count)
         {
             return (int)Math.Ceiling((double)items_count / items_per_page);
@@ -129,13 +126,27 @@ namespace Prototype
             }
             catch { return null; }
         }
-
         public static Image GetByteImage(byte[] data)
         {
             using (var ms = new MemoryStream(data))
             {
                 return new Bitmap(ms);
             }
+        }
+        public static string RandomString(int length)
+        {
+            char[] alphabet = "0123456789qwertyuiopasdfghjklzxcvbnm".ToCharArray();
+            string result = "";
+            for (int i = 0; i < length; i++)
+            {
+                result += alphabet[rnd.Next(0, alphabet.Length - 1)];
+            }
+            return result;
+        }
+        public static Brush RandomBrush()
+        {
+            Brush[] alphabet = { Brushes.Green, Brushes.Blue, Brushes.Black, Brushes.Red };
+            return alphabet[rnd.Next(0, alphabet.Length - 1)];
         }
     }
 }
