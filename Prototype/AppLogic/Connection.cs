@@ -987,7 +987,7 @@ namespace Prototype
         }
         #endregion
 
-        public static long GetRecordsCount(string table)
+        public static int GetRecordsCount(string table)
         {
             using (var con = new MySqlConnection(conString))
             {
@@ -995,7 +995,7 @@ namespace Prototype
                 string sql = $"SELECT COUNT(*) FROM {table}";
 
                 var cmd = new MySqlCommand(sql, con);
-                return cmd.ExecuteNonQuery();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
         

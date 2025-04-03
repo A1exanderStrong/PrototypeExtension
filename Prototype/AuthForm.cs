@@ -14,6 +14,7 @@ namespace Prototype
 {
     public partial class AuthForm : Form
     {
+        // выводить количество записей на форме stuff
         bool isPasswordVisible = false;
         string captchaText = null;
         int blockDelay = 10;
@@ -39,7 +40,7 @@ namespace Prototype
             if (!checkFields()) { std.error("Не все поля заполнены!"); return; }
             if (captchaText != null && captchaText != txtCaptcha.Text)
             {
-                std.error("Капча введена неверно");
+                std.error("Капча введена неверно. Система блокируется на 10 секунд");
                 txtPassword.Text = "";
                 BlockForm();
                 await Task.Delay(1000 * blockDelay);
@@ -76,6 +77,7 @@ namespace Prototype
             Size = new Size(815, 227);
             picCaptcha.Image = null;
             picCaptcha.Update();
+            txtCaptcha.Text = "";
 
             string part0 = std.RandomString(4);
             string part1 = std.RandomString(4);
@@ -83,7 +85,7 @@ namespace Prototype
 
             // текст капчи
             Graphics g = picCaptcha.CreateGraphics();
-            Font font = new Font("Comic Sans", 24);
+            Font font = new Font("Comic Sans", 30);
             Point textChunk01 = new Point(std.rnd.Next(0, 50), std.rnd.Next(0, 30));
             Point textChunk02 = new Point(textChunk01.X + std.rnd.Next(25, 45), textChunk01.Y + std.rnd.Next(20, 40));
             g.DrawString(part0, font, std.RandomBrush(), textChunk01);
@@ -92,11 +94,11 @@ namespace Prototype
             Pen pen = new Pen(Brushes.White);
 
             // перечёркивающие линии
-            pen.Width = 2.5f;
+            pen.Width = 2f;
             Point initPoint01 = new Point(textChunk01.X, textChunk01.Y + std.rnd.Next(10, 40));
             Point initPoint02 = new Point(textChunk02.X, textChunk02.Y + std.rnd.Next(10, 40));
-            g.DrawLine(pen, initPoint01, new Point(textChunk01.X + 75, textChunk01.Y + std.rnd.Next(10, 40)));
-            g.DrawLine(pen, initPoint02, new Point(textChunk02.X + 75, textChunk02.Y + std.rnd.Next(10, 40)));
+            g.DrawLine(pen, initPoint01, new Point(textChunk01.X + 90, textChunk01.Y + std.rnd.Next(10, 40)));
+            g.DrawLine(pen, initPoint02, new Point(textChunk02.X + 90, textChunk02.Y + std.rnd.Next(10, 40)));
 
             pen.Width = 0.25f;
             // шум

@@ -45,6 +45,10 @@ namespace Prototype
             this.labelResourcesNotFound = new System.Windows.Forms.Label();
             this.btnBucket = new System.Windows.Forms.Button();
             this.btnRemoveResource = new System.Windows.Forms.Button();
+            this.btnIncPage = new System.Windows.Forms.Button();
+            this.btnDecPage = new System.Windows.Forms.Button();
+            this.lbPageNum = new System.Windows.Forms.Label();
+            this.lbDisplayed = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.loaderImage)).BeginInit();
             this.SuspendLayout();
@@ -77,7 +81,7 @@ namespace Prototype
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 596);
+            this.button1.Location = new System.Drawing.Point(12, 679);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(126, 37);
             this.button1.TabIndex = 7;
@@ -126,7 +130,7 @@ namespace Prototype
             // 
             // btnAddToBucket
             // 
-            this.btnAddToBucket.Location = new System.Drawing.Point(688, 596);
+            this.btnAddToBucket.Location = new System.Drawing.Point(688, 679);
             this.btnAddToBucket.Name = "btnAddToBucket";
             this.btnAddToBucket.Size = new System.Drawing.Size(157, 37);
             this.btnAddToBucket.TabIndex = 12;
@@ -136,7 +140,7 @@ namespace Prototype
             // 
             // btnEditResource
             // 
-            this.btnEditResource.Location = new System.Drawing.Point(525, 596);
+            this.btnEditResource.Location = new System.Drawing.Point(525, 679);
             this.btnEditResource.Name = "btnEditResource";
             this.btnEditResource.Size = new System.Drawing.Size(157, 37);
             this.btnEditResource.TabIndex = 13;
@@ -208,7 +212,7 @@ namespace Prototype
             // 
             // btnRemoveResource
             // 
-            this.btnRemoveResource.Location = new System.Drawing.Point(362, 596);
+            this.btnRemoveResource.Location = new System.Drawing.Point(362, 679);
             this.btnRemoveResource.Name = "btnRemoveResource";
             this.btnRemoveResource.Size = new System.Drawing.Size(157, 37);
             this.btnRemoveResource.TabIndex = 20;
@@ -216,11 +220,53 @@ namespace Prototype
             this.btnRemoveResource.UseVisualStyleBackColor = true;
             this.btnRemoveResource.Click += new System.EventHandler(this.btnRemoveResource_Click);
             // 
+            // btnIncPage
+            // 
+            this.btnIncPage.Location = new System.Drawing.Point(799, 586);
+            this.btnIncPage.Name = "btnIncPage";
+            this.btnIncPage.Size = new System.Drawing.Size(46, 37);
+            this.btnIncPage.TabIndex = 21;
+            this.btnIncPage.Text = ">";
+            this.btnIncPage.UseVisualStyleBackColor = true;
+            this.btnIncPage.Click += new System.EventHandler(this.btnIncPage_Click);
+            // 
+            // btnDecPage
+            // 
+            this.btnDecPage.Location = new System.Drawing.Point(747, 586);
+            this.btnDecPage.Name = "btnDecPage";
+            this.btnDecPage.Size = new System.Drawing.Size(46, 37);
+            this.btnDecPage.TabIndex = 22;
+            this.btnDecPage.Text = "<";
+            this.btnDecPage.UseVisualStyleBackColor = true;
+            this.btnDecPage.Click += new System.EventHandler(this.btnDecPage_Click);
+            // 
+            // lbPageNum
+            // 
+            this.lbPageNum.AutoSize = true;
+            this.lbPageNum.Location = new System.Drawing.Point(12, 614);
+            this.lbPageNum.Name = "lbPageNum";
+            this.lbPageNum.Size = new System.Drawing.Size(128, 20);
+            this.lbPageNum.TabIndex = 23;
+            this.lbPageNum.Text = "PAGE NUMBER";
+            // 
+            // lbDisplayed
+            // 
+            this.lbDisplayed.AutoSize = true;
+            this.lbDisplayed.Location = new System.Drawing.Point(12, 594);
+            this.lbDisplayed.Name = "lbDisplayed";
+            this.lbDisplayed.Size = new System.Drawing.Size(154, 20);
+            this.lbDisplayed.TabIndex = 24;
+            this.lbDisplayed.Text = "ITEMS DISPLAYED";
+            // 
             // StuffForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(857, 643);
+            this.ClientSize = new System.Drawing.Size(857, 728);
+            this.Controls.Add(this.lbDisplayed);
+            this.Controls.Add(this.lbPageNum);
+            this.Controls.Add(this.btnDecPage);
+            this.Controls.Add(this.btnIncPage);
             this.Controls.Add(this.btnRemoveResource);
             this.Controls.Add(this.btnBucket);
             this.Controls.Add(this.labelResourcesNotFound);
@@ -271,5 +317,9 @@ namespace Prototype
         private System.Windows.Forms.Label labelResourcesNotFound;
         private System.Windows.Forms.Button btnBucket;
         private System.Windows.Forms.Button btnRemoveResource;
+        private System.Windows.Forms.Button btnIncPage;
+        private System.Windows.Forms.Button btnDecPage;
+        private System.Windows.Forms.Label lbPageNum;
+        private System.Windows.Forms.Label lbDisplayed;
     }
 }

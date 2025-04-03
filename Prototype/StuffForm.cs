@@ -13,16 +13,18 @@ namespace Prototype
 {
     public partial class StuffForm : Form
     {
-        // ###############################################
-        // TRY HERE DATA TABLES (DATA ADAPTER) INSTEAD
-        // ###############################################
         private const int rowsHeight = 100;
         private const int chunckSize = 20; // количество отображаемых ресурсов
+        private int limit = chunckSize;
         private int offset = 0;
+        private int itemsDisplayed = 1;
+        private int pageNum = 1;
+        private int itemsCount = Connection.GetRecordsCount("resources");
+        List<LinkLabel> pagesClickable = new List<LinkLabel>();
         //private readonly static long resourcesCount = Connection.GetRecordsCount("resources");
         //private static int totalPages = std.CountPages(chunckSize, (int)resourcesCount);
 
-      
+
         private List<Resource> resources = new List<Resource>();
         private List<Resource> owningResources = new List<Resource>();
         public List<Resource> bucket = new List<Resource>();
@@ -93,6 +95,46 @@ namespace Prototype
             ReloadPage();
         }
 
+        private void PageNumberClick(object sender, EventArgs e)
+        {
+            var label = (LinkLabel)sender;
+            string num = label.Text.Trim(',');
+            pageNum = Convert.ToInt32(num);
+            limit = pageNum*chunckSize;
+            offset = (pageNum - 1) * chunckSize;
+            ReloadPage();
+        }
+
+        private void updatePagesCount()
+        {
+            pagesClickable.ForEach(label => {
+                Controls.Remove(label);
+            });
+            pagesClickable.Clear();
+
+            SetPage(1);
+            itemsCount = Connection.GetRecordsCount("resources");
+            if (filter != "") itemsCount = resources.Count;
+
+            System.Drawing.Point initLocation = new System.Drawing.Point(486, 627);
+            
+            for (int i = 0; i < std.CountPages(chunckSize, itemsCount); i++)
+            {
+                pagesClickable.Add(new LinkLabel
+                {
+                    Text = $"{i + 1}",
+                    AutoSize = true,
+                    Location = new System.Drawing.Point(initLocation.X + (20 * i + 1), initLocation.Y)
+                });
+            }
+            pagesClickable.ForEach(label =>
+            {
+                label.Parent = this;
+                label.Show();
+                label.Click += PageNumberClick;
+            });
+        }
+
         public async void ReloadPage()
         {
             resources.Clear();
@@ -113,10 +155,11 @@ namespace Prototype
             //labelResourcesNotFound.Visible = false;
             #endregion
 
-            var getResources = Connection.GetResources(name, filter, sort, chunckSize, offset, sort_reversed);
+            var getResources = Connection.GetResources(name, filter, sort, limit, offset, sort_reversed);
             var getOwning = AppData.ActiveUser.GetResources();
             await getResources;
             await getOwning;
+            
             for (int i = 0; i < maxRequests; i++)
             {
                 //request.Wait((int)(10000 * resources_update_delay));
@@ -125,6 +168,7 @@ namespace Prototype
                     resources = getResources.Result;
                     owningResources = getOwning.Result;
                     updateRows();
+                    updatePagesCount();
                     loaderImage.Visible = false;
                     return;
                 }
@@ -196,6 +240,8 @@ namespace Prototype
         {
             dgv.Rows.Clear();
             dgv.RowTemplate.Height = rowsHeight;
+            itemsDisplayed = 0;
+            lbPageNum.Text = $"Номер страницы: {pageNum}";
             // picture | name | category | price | author
             foreach (Resource resource in resources) 
             {
@@ -204,7 +250,9 @@ namespace Prototype
                             resource.Category.Name,
                             resource.Price,
                             resource.GetAuthor().Login);
+                itemsDisplayed++;
             }
+            lbDisplayed.Text = $"Отображено ресурсов: {itemsDisplayed}";
             txtResourceName.AutoCompleteCustomSource = std.UpdateAutoCompleteSource(resources);
         }
 
@@ -212,7 +260,6 @@ namespace Prototype
         {
             name = txtResourceName.Text;
             if (name.Length >= 3 || name.Length == 0) ReloadPage();
-            //updateRows();
         }
 
         private void StuffForm_FormClosing(object sender, FormClosingEventArgs e) => std.AppExit(e);
@@ -267,22 +314,6 @@ namespace Prototype
             bucketForm.updateRows();
         }
 
-        /// <summary>
-        /// Проверяет имеются ли в корзине уже купленные ресурсы и удаляет их
-        /// </summary>
-        private void checkResource()
-        {
-            
-            List<Resource> badResources = new List<Resource>();
-            foreach (Resource resource in resources)
-            {
-                foreach (Resource ownResource in owningResources)
-                {
-                    if (resource.Id == ownResource.Id) { badResources.Add(resource); bucket.Remove(resource); }
-                }
-            }
-        }
-
         private void btnBucket_Click(object sender, EventArgs e)
         {
             bucketForm = new User.BucketForm(bucket, this);
@@ -310,6 +341,29 @@ namespace Prototype
             if (resource == null) return;
 
             new AddEditResource(this, resource).ShowDialog();
+        }
+
+        private void SetPage(int page_number)
+        {
+            pageNum = page_number;
+            limit = pageNum * chunckSize;
+            offset = (pageNum - 1) * chunckSize;
+        }
+
+        private void btnIncPage_Click(object sender, EventArgs e)
+        {
+            //int itemsCount = Connection.GetRecordsCount("resources");
+            int pageCount = std.CountPages(chunckSize, itemsCount);
+            if (pageNum + 1 > pageCount) return;
+            SetPage(pageNum++);
+            ReloadPage();
+        }
+
+        private void btnDecPage_Click(object sender, EventArgs e)
+        {
+            if (pageNum - 1 <= 0) return;
+            SetPage(pageNum--);
+            ReloadPage();
         }
     }
 }

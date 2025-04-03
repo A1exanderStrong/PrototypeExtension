@@ -135,7 +135,7 @@ namespace Prototype
         }
         public static string RandomString(int length)
         {
-            char[] alphabet = "0123456789qwertyuiopasdfghjklzxcvbnm".ToCharArray();
+            char[] alphabet = "0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM".ToCharArray();
             string result = "";
             for (int i = 0; i < length; i++)
             {
