@@ -99,9 +99,10 @@ namespace Prototype
         {
             var label = (LinkLabel)sender;
             string num = label.Text.Trim(',');
-            pageNum = Convert.ToInt32(num);
-            limit = pageNum*chunckSize;
-            offset = (pageNum - 1) * chunckSize;
+            SetPage(Convert.ToInt32(num));
+            //pageNum = Convert.ToInt32(num);
+            //limit = pageNum*chunckSize;
+            //offset = (pageNum - 1) * chunckSize;
             ReloadPage();
         }
 
@@ -112,7 +113,6 @@ namespace Prototype
             });
             pagesClickable.Clear();
 
-            SetPage(1);
             itemsCount = Connection.GetRecordsCount("resources");
             if (filter != "") itemsCount = resources.Count;
 
@@ -133,6 +133,7 @@ namespace Prototype
                 label.Show();
                 label.Click += PageNumberClick;
             });
+            if (itemsCount <= chunckSize) SetPage(1);
         }
 
         public async void ReloadPage()
@@ -154,7 +155,7 @@ namespace Prototype
             //loaderImage.Visible = false;
             //labelResourcesNotFound.Visible = false;
             #endregion
-
+            updatePagesCount();
             var getResources = Connection.GetResources(name, filter, sort, limit, offset, sort_reversed);
             var getOwning = AppData.ActiveUser.GetResources();
             await getResources;
@@ -168,7 +169,6 @@ namespace Prototype
                     resources = getResources.Result;
                     owningResources = getOwning.Result;
                     updateRows();
-                    updatePagesCount();
                     loaderImage.Visible = false;
                     return;
                 }
@@ -346,8 +346,9 @@ namespace Prototype
         private void SetPage(int page_number)
         {
             pageNum = page_number;
-            limit = pageNum * chunckSize;
-            offset = (pageNum - 1) * chunckSize;
+            limit = page_number * chunckSize;
+            offset = (page_number - 1) * chunckSize;
+            return;
         }
 
         private void btnIncPage_Click(object sender, EventArgs e)
@@ -355,14 +356,14 @@ namespace Prototype
             //int itemsCount = Connection.GetRecordsCount("resources");
             int pageCount = std.CountPages(chunckSize, itemsCount);
             if (pageNum + 1 > pageCount) return;
-            SetPage(pageNum++);
+            SetPage(pageNum+1);
             ReloadPage();
         }
 
         private void btnDecPage_Click(object sender, EventArgs e)
         {
             if (pageNum - 1 <= 0) return;
-            SetPage(pageNum--);
+            SetPage(pageNum-1);
             ReloadPage();
         }
     }

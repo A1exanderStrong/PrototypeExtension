@@ -42,6 +42,7 @@ namespace Prototype.Admin
             txtEmail.Text = selectedUser.Email;
             txtLogin.Text = selectedUser.Login;
             txtName.Text = selectedUser.Name;
+            txtPhone.Text = selectedUser.Phone;
             cmbRole.Text = selectedUser.Role.Name;
         }
 
@@ -78,6 +79,7 @@ namespace Prototype.Admin
                     Login = txtLogin.Text,
                     Password = std.sha256(txtPassword.Text),
                     RegistrationDate = DateTime.Now,
+                    Phone = txtPhone.Text,
                     Role = Connection.GetRole(cmbRole.Text)
                 });
 
@@ -99,12 +101,18 @@ namespace Prototype.Admin
                 Email = txtEmail.Text,
                 Login = txtLogin.Text,
                 Password = std.sha256(txtPassword.Text),
+                Phone = txtPhone.Text,
                 RegistrationDate = DateTime.Now,
                 Role = Connection.GetRole(cmbRole.Text)
             });
             std.info("Пользователь успешно изменён");
             usersForm.ReloadPage();
             Close();
+        }
+
+        private void NumbersOnlyInput(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) || !char.IsDigit(e.KeyChar)) e.Handled = true;
         }
     }
 }

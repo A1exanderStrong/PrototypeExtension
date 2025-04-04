@@ -39,11 +39,13 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.cmbRole = new System.Windows.Forms.ComboBox();
+            this.txtPhone = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnAddApply
             // 
-            this.btnAddApply.Location = new System.Drawing.Point(240, 291);
+            this.btnAddApply.Location = new System.Drawing.Point(240, 363);
             this.btnAddApply.Name = "btnAddApply";
             this.btnAddApply.Size = new System.Drawing.Size(152, 36);
             this.btnAddApply.TabIndex = 11;
@@ -122,7 +124,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 217);
+            this.label5.Location = new System.Drawing.Point(12, 289);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(51, 20);
             this.label5.TabIndex = 18;
@@ -133,16 +135,36 @@
             this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRole.ForeColor = System.Drawing.Color.Gray;
             this.cmbRole.FormattingEnabled = true;
-            this.cmbRole.Location = new System.Drawing.Point(12, 240);
+            this.cmbRole.Location = new System.Drawing.Point(12, 312);
             this.cmbRole.Name = "cmbRole";
             this.cmbRole.Size = new System.Drawing.Size(380, 28);
             this.cmbRole.TabIndex = 19;
+            // 
+            // txtPhone
+            // 
+            this.txtPhone.Location = new System.Drawing.Point(12, 240);
+            this.txtPhone.MaxLength = 12;
+            this.txtPhone.Name = "txtPhone";
+            this.txtPhone.Size = new System.Drawing.Size(383, 26);
+            this.txtPhone.TabIndex = 21;
+            this.txtPhone.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumbersOnlyInput);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 217);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(146, 20);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Номер телефона:";
             // 
             // AddEditUser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 339);
+            this.ClientSize = new System.Drawing.Size(404, 411);
+            this.Controls.Add(this.txtPhone);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.cmbRole);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtEmail);
@@ -178,5 +200,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cmbRole;
+        private System.Windows.Forms.TextBox txtPhone;
+        private System.Windows.Forms.Label label6;
     }
 }

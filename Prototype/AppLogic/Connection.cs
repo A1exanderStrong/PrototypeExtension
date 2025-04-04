@@ -121,6 +121,7 @@ namespace Prototype
                         user.Email = reader.GetString("email");
                         user.Name = reader.GetString("name");
                         user.Role = GetRole(reader.GetInt32("role"));
+                        user.Phone = reader.GetString("phone");
                         user.RegistrationDate = reader.GetDateTime("registration_date");
                     }
                 }
@@ -151,6 +152,7 @@ namespace Prototype
                         Email = reader.GetString("email"),
                         Name = reader.GetString("name"),
                         Role = GetRole(reader.GetInt32("role")),
+                        Phone = reader.GetString("phone"),
                         RegistrationDate = reader.GetDateTime("registration_date")
                     };
                 }
@@ -176,6 +178,7 @@ namespace Prototype
                         Email = reader.GetString("email"),
                         Name = reader.GetString("name"),
                         Role = GetRole(reader.GetInt32("role")),
+                        Phone = reader.GetString("phone"),
                         RegistrationDate = reader.GetDateTime("registration_date")
                     };
                 }
@@ -205,7 +208,8 @@ namespace Prototype
                     "email=@Email, " +
                     "registration_date=@RegistrationDate, " +
                     "role=@Role, " +
-                    "name=@Name " +
+                    "phone=@Phone, " +
+                    "SNP=@Name " +
                     $"WHERE id={user.Id}";
 
                 var cmd = new MySqlCommand(sql, con);
@@ -213,6 +217,7 @@ namespace Prototype
                 cmd.Parameters.AddWithValue("Password", user.Password);
                 cmd.Parameters.AddWithValue("Email", user.Email);
                 cmd.Parameters.AddWithValue("RegistrationDate", user.RegistrationDate);
+                cmd.Parameters.AddWithValue("Phone", user.Phone);
                 cmd.Parameters.AddWithValue("Role", user.Role.Id);
                 cmd.Parameters.AddWithValue("Name", user.Name);
                 cmd.CommandText = sql;
@@ -226,8 +231,8 @@ namespace Prototype
             {
                 con.Open();
 
-                string sql = "INSERT INTO `users`(login, password, email, registration_date, role, name) " +
-                    "VALUES(@Login, @Password, @Email, @RegistrationDate, @Role, @Name)";
+                string sql = "INSERT INTO `users`(login, password, email, registration_date, role, SNP, phone) " +
+                    "VALUES(@Login, @Password, @Email, @RegistrationDate, @Role, @Name, @Phone)";
 
                 var cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("Login", user.Login);
@@ -236,6 +241,7 @@ namespace Prototype
                 cmd.Parameters.AddWithValue("RegistrationDate", user.RegistrationDate);
                 cmd.Parameters.AddWithValue("Role", user.Role.Id);
                 cmd.Parameters.AddWithValue("Name", user.Name);
+                cmd.Parameters.AddWithValue("Phone", user.Phone);
                 cmd.CommandText = sql;
 
                 cmd.ExecuteNonQuery();
@@ -285,6 +291,7 @@ namespace Prototype
                                 Email = reader.GetString("email"),
                                 Name = reader.GetString("name"),
                                 Role = GetRole(reader.GetInt32("role")),
+                                Phone = reader.GetString("phone"),
                                 RegistrationDate = reader.GetDateTime("registration_date")
                             });
                         }

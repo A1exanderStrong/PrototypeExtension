@@ -16,7 +16,7 @@ namespace Prototype
 {
     public partial class UsersForm : Form
     {
-        private const int rowsHeight = 100;
+        private const int rowsHeight = 50;
         private const int chunckSize = 20; // количество отображаемых ресурсов
         private int offset = 0;
 
@@ -82,7 +82,7 @@ namespace Prototype
 
         private void createColumns()
         {
-            // login | name | email | role | registartion_date
+            // login | name | email | phone | role | registartion_date
 
             var login = new DataGridViewTextBoxColumn
             {
@@ -99,6 +99,11 @@ namespace Prototype
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells,
                 HeaderText = "email"
             };
+            var phone = new DataGridViewTextBoxColumn
+            {
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells,
+                HeaderText = "Номер телефона",
+            };
             var role = new DataGridViewTextBoxColumn
             {
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
@@ -113,6 +118,7 @@ namespace Prototype
             dgv.Columns.Add(login);
             dgv.Columns.Add(name);
             dgv.Columns.Add(email);
+            dgv.Columns.Add(phone);
             dgv.Columns.Add(role);
             dgv.Columns.Add(registration_date);
         }
@@ -122,15 +128,18 @@ namespace Prototype
             if (dgv.ColumnCount == 0) return;
             dgv.Rows.Clear();
             dgv.RowTemplate.Height = rowsHeight;
-            // login | _name | email | role | registartion_date
-            foreach (Entities.User user in users)
+            users.ForEach(user =>
             {
-                dgv.Rows.Add(user.Login, 
+                string start = user.Phone.Substring(0, 4);
+                string end = user.Phone.Substring(user.Phone.Length - 2, 2);
+
+                dgv.Rows.Add(user.Login,
                     user.Name,
                     user.Email,
+                    $"{start} *** {end}",
                     user.Role.Name,
-                    user.GetRegistrationDate());
-            }
+                    user.RegistrationDate.ToShortDateString());
+            });
             txtUserLogin.AutoCompleteCustomSource = std.UpdateAutoCompleteSource(users);
         }
 
