@@ -22,6 +22,7 @@ namespace Prototype
     public static class std
     {
         private static int exitCalls = 0;
+        public static bool bShowExitMessage = true;
         public static string loader_gif = "https://i.gifer.com/origin/b4/b4d657e7ef262b88eb5f7ac021edda87.gif";
         public static Random rnd = new Random();
 
@@ -49,8 +50,11 @@ namespace Prototype
             if (exitCalls > 0) return;
             exitCalls++;
             var answer = question("Вы действительно хотите выйти?");
-            if (answer == DialogResult.No) { e.Cancel = true; exitCalls = 0; }
-            if (answer == DialogResult.Yes) Application.Exit();
+            if (bShowExitMessage)
+            {
+                if (answer == DialogResult.No) { e.Cancel = true; exitCalls = 0; }
+                if (answer == DialogResult.Yes) Application.Exit();
+            }
         }
         public static async Task<Image> GetWebImageAsync(string url) => await Task.Run(() =>
         {

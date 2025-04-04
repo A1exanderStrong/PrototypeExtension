@@ -52,6 +52,7 @@ namespace Prototype
                 txtPassword.Text == AppData.DefaultUser.Password) 
             {
                 AppData.ActiveUser = AppData.DefaultUser;
+                Task.Run(Program.EnableTimer);
                 Hide(); 
                 new MainMenu().ShowDialog(); 
                 return; 
@@ -69,6 +70,9 @@ namespace Prototype
             AppData.ActiveUser = activeUser;
             
             Hide();
+            txtLogin.Clear();
+            txtPassword.Clear();
+            Task.Run(Program.EnableTimer);
             new MainMenu().ShowDialog();
         }
 
